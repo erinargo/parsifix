@@ -1,0 +1,3 @@
+/home/erin/CLionProjects/parsif-fix/cmake-build-debug/CMakeFiles/parsif_fix.dir
+/home/erin/CLionProjects/parsif-fix/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/erin/CLionProjects/parsif-fix/cmake-build-debug/CMakeFiles/rebuild_cache.dir
