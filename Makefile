@@ -1,6 +1,6 @@
 CFLAGS = -Wall -g
 
-PROGRAMS = proquest input.bib output.bib
+PROGRAMS = proquest.exe input.bib output.bib
 
 _OBJS = proquest.o main.o
 

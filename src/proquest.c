@@ -4,15 +4,31 @@
 
 #include "proquest.h"
 
-void getValue(char* bibtex_entry, char* field, char* value) {
-    char* start = strstr(bibtex_entry, field);
+void removeWhitespaces(char* input, char* output) {
+    int i = 0, j = 0;
+    while (input[i]) {
+        if (input[i] != ' ' && input[i] != '\t' && input[i] != '\n' && input[i] != '\r' && input[i] != '\f' && input[i] != '\v') {
+            output[j++] = input[i];
+        }
+        i++;
+    }
+    output[j] = '\0';
+}
 
-    if (start != NULL) {
-        start += strlen(field);
+void getValue(char* bibtex_entry, char* field, char* value) {
+    char *haystack = (char *)malloc(strlen(bibtex_entry) + 1);
+    removeWhitespaces(bibtex_entry, haystack);
+
+    char* field_check = strstr(haystack, field);
+
+    if (field_check != NULL) {
+        char *start = strstr(bibtex_entry, field);
+
         while (*start == ' ' || *start == '\t' || *start == '=' || *start == '{') {
             start++; // Skip unnecessary chars
         }
 
+        start += strlen(field);
         char* end = strchr(start, '}');
         if (end != NULL) {
             strncpy(value, start, end - start);
@@ -34,12 +50,12 @@ void pq(char* bibtex_entry, char* output) {
     char url[1000];
     char doi[1000];
 
-    getValue(bibtex_entry, "language", language);
-    getValue(bibtex_entry, "author", author);
-    getValue(bibtex_entry, "title", title);
-    getValue(bibtex_entry, "abstract", abstract);
-    getValue(bibtex_entry, "url", url);
-    getValue(bibtex_entry, "doi", doi);
+    getValue(bibtex_entry, "language={", language);
+    getValue(bibtex_entry, "author={", author);
+    getValue(bibtex_entry, "title={", title);
+    getValue(bibtex_entry, "abstract={", abstract);
+    getValue(bibtex_entry, "url={", url);
+    getValue(bibtex_entry, "doi={", doi);
 
     char *entry_start = strstr(bibtex_entry, "@");
     char *entry_end = strstr(bibtex_entry, "{");
@@ -48,7 +64,6 @@ void pq(char* bibtex_entry, char* output) {
         entry_type = (char *)malloc((entry_end - entry_start + 1) * sizeof(char));
 
         if(entry_type != NULL) {
-            printf("%s, %s, %s", language, author, title);
             strncpy(entry_type, entry_start, entry_end - entry_start);
             snprintf(modified_entry, sizeof(modified_entry),
                      "%s{\nlanguage={%s},\nauthor={%s},\ntitle={%s},\nabstract={%s},\nurl={%s},\ndoi={%s},\n}\n\n",
