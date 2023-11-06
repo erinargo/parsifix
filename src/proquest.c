@@ -9,6 +9,10 @@ void getValue(char* bibtex_entry, char* field, char* value) {
 
     if (start != NULL) {
         start += strlen(field);
+        while (*start == ' ' || *start == '\t' || *start == '=' || *start == '{') {
+            start++; // Skip unnecessary chars
+        }
+
         char* end = strchr(start, '}');
         if (end != NULL) {
             strncpy(value, start, end - start);
@@ -30,20 +34,12 @@ void pq(char* bibtex_entry, char* output) {
     char url[1000];
     char doi[1000];
 
-    /*memset(language, 0, sizeof(language));
-    memset(author, 0, sizeof(author));
-    memset(title, 0, sizeof(title));
-    memset(abstract, 0, sizeof(abstract));
-    memset(url, 0, sizeof(url));
-    memset(doi, 0, sizeof(doi));*/
-
-    // Search for and extract values manually
-    getValue(bibtex_entry, "language={", language);
-    getValue(bibtex_entry, "author={", author);
-    getValue(bibtex_entry, "title={", title);
-    getValue(bibtex_entry, "abstract={", abstract);
-    getValue(bibtex_entry, "url={", url);
-    getValue(bibtex_entry, "doi={", doi);
+    getValue(bibtex_entry, "language", language);
+    getValue(bibtex_entry, "author", author);
+    getValue(bibtex_entry, "title", title);
+    getValue(bibtex_entry, "abstract", abstract);
+    getValue(bibtex_entry, "url", url);
+    getValue(bibtex_entry, "doi", doi);
 
     char *entry_start = strstr(bibtex_entry, "@");
     char *entry_end = strstr(bibtex_entry, "{");
@@ -52,6 +48,7 @@ void pq(char* bibtex_entry, char* output) {
         entry_type = (char *)malloc((entry_end - entry_start + 1) * sizeof(char));
 
         if(entry_type != NULL) {
+            printf("%s, %s, %s", language, author, title);
             strncpy(entry_type, entry_start, entry_end - entry_start);
             snprintf(modified_entry, sizeof(modified_entry),
                      "%s{\nlanguage={%s},\nauthor={%s},\ntitle={%s},\nabstract={%s},\nurl={%s},\ndoi={%s},\n}\n\n",

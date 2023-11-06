@@ -25,10 +25,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char output[9999];
-    while (fgets(bibtex_entry, sizeof(bibtex_entry), input_file)) {
-        memset(output, 0, sizeof(output));
-        pq(bibtex_entry, output);
+    while (!feof(input_file)) {
+        char output[9999];
+        pq(fgets(bibtex_entry, sizeof(bibtex_entry), input_file), output);
 
         fputs(output, output_file);
     }
