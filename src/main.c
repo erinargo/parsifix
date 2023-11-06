@@ -10,7 +10,7 @@ void usage() {
 
 int main(int argc, char *argv[]) {
     FILE *input_file, *output_file;
-    char bibtex_entry[4096];
+    char bibtex_entry[9999];
 
     input_file = fopen("./input.bib", "r");
     if (input_file == NULL) {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char output[4096];
+    char output[9999];
     while (fgets(bibtex_entry, sizeof(bibtex_entry), input_file)) {
         pq(bibtex_entry, output);
         fputs(output, output_file);
