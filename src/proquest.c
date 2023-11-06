@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "proquest.h"
@@ -17,12 +18,10 @@ void getValue(char* bibtex_entry, char* field, char* value) {
 }
 
 void pq(char* bibtex_entry, char* output) {
-    if(bibtex_entry == NULL) return;
-
     char modified_entry[9999];
     memset(modified_entry, 0, sizeof(modified_entry));
 
-    char entry_type[100];
+    char *entry_type;
 
     char language[1000];
     char author[1000];
@@ -30,6 +29,13 @@ void pq(char* bibtex_entry, char* output) {
     char abstract[4096];
     char url[1000];
     char doi[1000];
+
+    /*memset(language, 0, sizeof(language));
+    memset(author, 0, sizeof(author));
+    memset(title, 0, sizeof(title));
+    memset(abstract, 0, sizeof(abstract));
+    memset(url, 0, sizeof(url));
+    memset(doi, 0, sizeof(doi));*/
 
     // Search for and extract values manually
     getValue(bibtex_entry, "language={", language);
@@ -42,11 +48,17 @@ void pq(char* bibtex_entry, char* output) {
     char *entry_start = strstr(bibtex_entry, "@");
     char *entry_end = strstr(bibtex_entry, "{");
 
-    if(entry_start != NULL) strncpy(entry_type, entry_start, entry_end - entry_start);
+    if(entry_start != NULL && entry_end != NULL) {
+        entry_type = (char *)malloc((entry_end - entry_start + 1) * sizeof(char));
 
-    snprintf(modified_entry, sizeof(modified_entry),
-             "%s{\nlanguage={%s},\nauthor={%s},\ntitle={%s},\nabstract={%s},\nurl={%s},\ndoi={%s},\n}\n\n",
-             entry_type, language, author, title, abstract, url, doi);
+        if(entry_type != NULL) {
+            strncpy(entry_type, entry_start, entry_end - entry_start);
+            snprintf(modified_entry, sizeof(modified_entry),
+                     "%s{\nlanguage={%s},\nauthor={%s},\ntitle={%s},\nabstract={%s},\nurl={%s},\ndoi={%s},\n}\n\n",
+                     entry_type, language, author, title, abstract, url, doi);
+            free(entry_type);
+        }
+    }
 
     strcpy(output, modified_entry);
 }
